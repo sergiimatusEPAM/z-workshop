@@ -19,6 +19,8 @@ jobs:
 
       inputs:
       - name: pipelines
+      outputs:
+      - name: pwd
       run:
         path: pipelines/ci/scripts/pwd.bat
 
@@ -26,13 +28,13 @@ jobs:
     config:
       platform: windows
       inputs:
-        - name: dir
+        - name: pwd
       outputs:
         - name: output
       run:
         path: runDockerImage.bat
       params:
         DOCKER_IMAGE: mcr.microsoft.com/dotnet/framework/sdk:4.7.2
-        WORKING_DIRECTORY: dir
+        WORKING_DIRECTORY: pwd
         SCRIPT_PATH: build.bat
         ENV_ENVIRONMENT_VARIABLE: 1
