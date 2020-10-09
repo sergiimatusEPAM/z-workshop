@@ -1,0 +1,38 @@
+#fly -t jakub_l set-pipeline -p windows-test -c windows-test-pipeline.yml
+resources:
+- name: pipelines
+  type: git
+  check_every: 10000h
+  source:
+    uri: https://github.com/sergiimatusEPAM/z-workshop.git
+
+
+jobs:
+- name: dir
+  serial: true
+  plan:
+  - get: pipelines
+    trigger: true
+  - task: dir
+    config:
+      platform: windows
+
+      inputs:
+      - name: pipelines
+      run:
+        path: pipelines/ci/scripts/pwd.bat
+
+  - task: build
+    config:
+      platform: windows
+      inputs:
+        - name: dir
+      outputs:
+        - name: output
+      run:
+        path: runDockerImage.bat
+      params:
+        DOCKER_IMAGE: mcr.microsoft.com/dotnet/framework/sdk:4.7.2
+        WORKING_DIRECTORY: dir
+        SCRIPT_PATH: build.bat
+        ENV_ENVIRONMENT_VARIABLE: 1
